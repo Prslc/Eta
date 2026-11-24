@@ -17,8 +17,13 @@ import androidx.compose.runtime.setValue
 @Composable
 internal fun SpeechVoiceSection(store: SpeechSettingsStore) {
     val settings = store.settings
+    if (settings.tts == TtsProvider.SYSTEM) {
+        SpeechNote(stringResource(R.string.speech_system_voice_note))
+        return
+    }
     val voice = when (settings.tts) {
         TtsProvider.NONE -> return
+        TtsProvider.SYSTEM -> ""
         TtsProvider.QWEN -> settings.qwenVoice
         TtsProvider.DOUBAO -> settings.doubaoVoice
         TtsProvider.GEMINI -> settings.geminiTts.voice
@@ -34,6 +39,7 @@ internal fun SpeechVoiceSection(store: SpeechSettingsStore) {
         store.edit(
             when (settings.tts) {
                 TtsProvider.NONE -> settings
+                TtsProvider.SYSTEM -> settings
                 TtsProvider.QWEN -> settings.copy(qwenVoice = it)
                 TtsProvider.DOUBAO -> settings.copy(doubaoVoice = it)
                 TtsProvider.GEMINI -> settings.copy(geminiTts = settings.geminiTts.copy(voice = it))
@@ -85,6 +91,7 @@ internal fun SpeechVoiceSection(store: SpeechSettingsStore) {
                     TtsProvider.MINIMAX -> R.string.speech_minimax_voice_note
                     TtsProvider.MIMO -> R.string.speech_mimo_voice_note
                     TtsProvider.DEEPSEEK -> R.string.speech_deepseek_voice_note
+                    TtsProvider.SYSTEM -> R.string.speech_system_voice_note
                     TtsProvider.NONE -> error("No synthesis provider")
                 },
             ),

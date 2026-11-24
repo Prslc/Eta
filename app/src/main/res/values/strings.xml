@@ -1205,6 +1205,7 @@
   <string name="speech_asr_qwen_file">Qwen · File transcription</string>
   <string name="speech_asr_doubao">Doubao · Streaming 2.0</string>
   <string name="speech_tts_none">Off</string>
+  <string name="speech_tts_system">System (on-device)</string>
   <string name="speech_tts_qwen">Qwen</string>
   <string name="speech_tts_doubao">Doubao</string>
   <string name="speech_asr_note_streaming">Text appears as you speak. Tap Done to finish dictation in chat; the assistant overlay can submit automatically after a pause.</string>
@@ -1275,6 +1276,7 @@
   <string name="speech_voice_doubao_xiaoming">Xiaoming</string>
   <string name="speech_voice_doubao_podcast">Late Night Podcast</string>
   <string name="speech_qwen_voice_note">Model: qwen3-tts-flash. The voice must support this model.</string>
+  <string name="speech_system_voice_note">Uses the device TTS engine (MiBrain, the XiaoAi voice, on Xiaomi devices). No network or API key required, and it works offline.</string>
   <string name="speech_doubao_voice_note">Model: Doubao Speech Synthesis 2.0.</string>
   <string name="speech_test_recognition">Test recognition</string>
   <string name="speech_test_finish">Finish recording</string>

@@ -38,6 +38,14 @@
     <string name="voice_i18n_http_request_failed">Speech service request failed (HTTP %1$d)</string>
     <string name="voice_i18n_audio_focus_unavailable">Unable to acquire audio focus right now. Please try again later.</string>
     <string name="voice_i18n_audio_playback_failed">Audio playback failed</string>
+
+    <!-- System TTS (on-device engine) -->
+    <string name="voice_i18n_system_tts_failed">System speech synthesis failed</string>
+    <string name="voice_i18n_system_tts_failed_code">System speech synthesis failed (%1$d)</string>
+    <string name="voice_i18n_system_tts_timeout">System speech synthesis timed out</string>
+    <string name="voice_i18n_system_tts_unavailable">System speech synthesis is unavailable. Check the system TTS engine.</string>
+    <string name="voice_i18n_system_tts_storage">Unable to create a system speech cache file</string>
+    <string name="voice_i18n_system_tts_bad_audio">The system TTS engine returned audio in an unsupported format</string>
     <string name="voice_i18n_audio_format_or_length_invalid">Invalid speech audio format or length</string>
     <string name="voice_i18n_audio_incomplete">Speech audio is incomplete. Please try again.</string>
     <string name="voice_i18n_audio_chunk_too_large">Speech audio chunk is too large</string>

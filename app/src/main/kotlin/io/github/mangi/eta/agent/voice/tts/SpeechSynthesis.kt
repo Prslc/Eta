@@ -1,5 +1,6 @@
 package io.github.mangi.eta.agent.voice.tts
 
+import android.content.Context
 import io.github.mangi.eta.R
 import io.github.mangi.eta.core.AppStrings
 import io.github.mangi.eta.data.model.SpeechCredentials
@@ -19,9 +20,15 @@ import io.github.mangi.eta.agent.voice.audio.SpeechSseDecoder
 import io.github.mangi.eta.agent.voice.audio.doubaoHeaders
 import io.github.mangi.eta.agent.voice.audio.speechBaseUrl
 
-internal suspend fun synthesizeSpeech(settings: SpeechSettings, credentials: SpeechCredentials,
-    text: String, onAudio: (ByteArray) -> Unit) = withTimeout(90_000) {
+internal suspend fun synthesizeSpeech(
+    context: Context,
+    settings: SpeechSettings,
+    credentials: SpeechCredentials,
+    text: String,
+    onAudio: (ByteArray) -> Unit,
+) = withTimeout(90_000) {
     when (settings.tts) {
+        TtsProvider.SYSTEM -> return@withTimeout synthesizeSystemSpeech(context, text, onAudio)
         TtsProvider.GEMINI -> return@withTimeout synthesizeGemini(settings.geminiTts, credentials.geminiTts, text, onAudio)
         TtsProvider.MINIMAX -> return@withTimeout synthesizeMiniMax(settings.minimaxTts, credentials.minimaxTts, text, onAudio)
         TtsProvider.MIMO -> return@withTimeout synthesizeMimo(settings.mimoTts, credentials.mimoTts, text, onAudio)

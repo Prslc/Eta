@@ -63,6 +63,7 @@ internal fun validateSpeechSettings(
                 SpeechErrorCode.CONFIGURATION,
                 AppStrings.get(R.string.voice_i18n_config_tts_required, "请先在设置中配置语音播报"),
             )
+            TtsProvider.SYSTEM -> Unit
             TtsProvider.QWEN -> {
                 required(secrets.qwenTts, R.string.voice_i18n_field_qwen_tts_api_key, "千问播报 API Key")
                 required(settings.qwenVoice, R.string.voice_i18n_field_voice, "音色")

@@ -41,6 +41,7 @@ internal fun SpeechConnectionSection(store: SpeechSettingsStore, synthesis: Bool
     }
     when (store.settings.tts) {
         TtsProvider.NONE -> Unit
+        TtsProvider.SYSTEM -> Unit
         TtsProvider.QWEN, TtsProvider.DOUBAO -> QwenDoubaoConnectionSection(store, synthesis = true)
         TtsProvider.GEMINI -> GeminiConnectionSection(store)
         TtsProvider.MINIMAX -> MiniMaxConnectionSection(store)

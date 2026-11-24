@@ -1,5 +1,6 @@
 package io.github.mangi.eta.agent.voice.tts
 
+import android.content.Context
 import io.github.mangi.eta.R
 import io.github.mangi.eta.core.AppStrings
 import io.github.mangi.eta.data.model.SpeechCredentials
@@ -20,7 +21,7 @@ import io.github.mangi.eta.agent.voice.audio.doubaoHeaders
 import io.github.mangi.eta.agent.voice.audio.speechBaseUrl
 
 internal fun supportsSpeechSession(provider: TtsProvider): Boolean = when (provider) {
-    TtsProvider.QWEN, TtsProvider.DOUBAO, TtsProvider.DEEPSEEK -> true
+    TtsProvider.QWEN, TtsProvider.DOUBAO, TtsProvider.DEEPSEEK, TtsProvider.SYSTEM -> true
     TtsProvider.NONE, TtsProvider.GEMINI, TtsProvider.MINIMAX, TtsProvider.MIMO -> false
 }
 
@@ -30,12 +31,14 @@ internal fun supportsSpeechSession(provider: TtsProvider): Boolean = when (provi
  * 音频按到达顺序经 [onAudio] 交出；任一阶段失败都以 [SpeechFailure] 结束。
  */
 internal suspend fun streamSpeech(
+    context: Context,
     settings: SpeechSettings,
     credentials: SpeechCredentials,
     chunks: List<String>,
     onAudio: (ByteArray) -> Unit,
 ) = withTimeout(STREAM_TIMEOUT_MS) {
     when (settings.tts) {
+        TtsProvider.SYSTEM -> streamSystemSpeech(context, chunks, onAudio)
         TtsProvider.QWEN -> streamQwen(settings, credentials, chunks, onAudio)
         TtsProvider.DOUBAO -> streamDoubao(settings, credentials, chunks, onAudio)
         TtsProvider.DEEPSEEK -> streamDeepSeekSpeech(settings.deepseekTts, credentials.deepseekTts, chunks, onAudio)

@@ -38,6 +38,14 @@
     <string name="voice_i18n_http_request_failed">语音服务请求失败（HTTP %1$d）</string>
     <string name="voice_i18n_audio_focus_unavailable">当前无法获得音频焦点，请稍后重试</string>
     <string name="voice_i18n_audio_playback_failed">音频播放失败</string>
+
+    <!-- System TTS (on-device engine) -->
+    <string name="voice_i18n_system_tts_failed">系统语音合成失败</string>
+    <string name="voice_i18n_system_tts_failed_code">系统语音合成失败（%1$d）</string>
+    <string name="voice_i18n_system_tts_timeout">系统语音合成超时</string>
+    <string name="voice_i18n_system_tts_unavailable">系统语音合成不可用，请检查系统 TTS 引擎</string>
+    <string name="voice_i18n_system_tts_storage">无法创建系统语音缓存文件</string>
+    <string name="voice_i18n_system_tts_bad_audio">系统语音引擎返回了不支持的音频格式</string>
     <string name="voice_i18n_audio_format_or_length_invalid">语音音频格式或长度无效</string>
     <string name="voice_i18n_audio_incomplete">语音音频不完整，请重试</string>
     <string name="voice_i18n_audio_chunk_too_large">语音音频块过大</string>

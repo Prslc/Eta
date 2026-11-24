@@ -38,6 +38,14 @@
     <string name="voice_i18n_http_request_failed">語音服務請求失敗（HTTP %1$d）</string>
     <string name="voice_i18n_audio_focus_unavailable">目前無法取得音訊焦點，請稍後重試</string>
     <string name="voice_i18n_audio_playback_failed">音訊播放失敗</string>
+
+    <!-- System TTS (on-device engine) -->
+    <string name="voice_i18n_system_tts_failed">系統語音合成失敗</string>
+    <string name="voice_i18n_system_tts_failed_code">系統語音合成失敗（%1$d）</string>
+    <string name="voice_i18n_system_tts_timeout">系統語音合成逾時</string>
+    <string name="voice_i18n_system_tts_unavailable">系統語音合成不可用，請檢查系統 TTS 引擎</string>
+    <string name="voice_i18n_system_tts_storage">無法建立系統語音快取檔案</string>
+    <string name="voice_i18n_system_tts_bad_audio">系統語音引擎傳回了不支援的音訊格式</string>
     <string name="voice_i18n_audio_format_or_length_invalid">語音音訊格式或長度無效</string>
     <string name="voice_i18n_audio_incomplete">語音音訊不完整，請重試</string>
     <string name="voice_i18n_audio_chunk_too_large">語音音訊區塊過大</string>

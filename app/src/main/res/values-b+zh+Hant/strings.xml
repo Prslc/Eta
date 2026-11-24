@@ -1175,6 +1175,7 @@
   <string name="speech_asr_qwen_file">千問 · 檔案轉寫</string>
   <string name="speech_asr_doubao">豆包 · 串流識別 2.0</string>
   <string name="speech_tts_none">關閉</string>
+  <string name="speech_tts_system">系統（本機）</string>
   <string name="speech_tts_qwen">千問</string>
   <string name="speech_tts_doubao">豆包</string>
   <string name="speech_asr_note_streaming">邊說邊顯示文字。聊天聽寫點擊完成；助手浮窗可在停頓後自動提交。</string>
@@ -1244,6 +1245,7 @@
   <string name="speech_voice_doubao_xiaoming">解說小明</string>
   <string name="speech_voice_doubao_podcast">深夜播客</string>
   <string name="speech_qwen_voice_note">模型：qwen3-tts-flash。音色須支援該模型。</string>
+  <string name="speech_system_voice_note">使用裝置內建的語音合成引擎（小米裝置為 MiBrain，即小愛音色），無需網路和 API Key，可離線使用。</string>
   <string name="speech_doubao_voice_note">模型：豆包語音合成 2.0。</string>
   <string name="speech_test_recognition">測試識別</string>
   <string name="speech_test_finish">完成錄音</string>

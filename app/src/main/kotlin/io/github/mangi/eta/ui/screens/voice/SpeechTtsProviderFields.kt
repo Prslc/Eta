@@ -146,6 +146,6 @@ internal fun SpeechDeliveryFields(store: SpeechSettingsStore) {
                 onCheckedChange = onToggle,
             )
         }
-        TtsProvider.NONE, TtsProvider.QWEN, TtsProvider.DOUBAO -> Unit
+        TtsProvider.NONE, TtsProvider.SYSTEM, TtsProvider.QWEN, TtsProvider.DOUBAO -> Unit
     }
 }
