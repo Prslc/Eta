@@ -303,7 +303,7 @@ internal fun AgentOverlayCapsule(
                                     tint = MiuixTheme.colorScheme.onSurface,
                                     onClick = { setSupplementMode(true) },
                                 )
-                                if (state.phase == AgentOverlayPhase.RUNNING) {
+                                if (state.phase == AgentOverlayPhase.RUNNING && state.controlsGui) {
                                     CapsuleAction(
                                         icon = Icons.Rounded.Pause,
                                         label = stringResource(R.string.overlay_pause),

@@ -148,6 +148,7 @@ internal fun AgentOverlayGlow(
     }
     // 后台虚拟屏激活时，物理屏幕属于用户，不绘制四边流光。
     if (virtualDisplay.active) return
+    if (!state.controlsGui) return
     val phase = state.phase
     if (phase != AgentOverlayPhase.RUNNING && phase != AgentOverlayPhase.PAUSED) return
     val running = phase == AgentOverlayPhase.RUNNING

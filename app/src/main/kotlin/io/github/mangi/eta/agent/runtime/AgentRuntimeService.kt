@@ -559,7 +559,9 @@ internal class AgentRuntimeService : Service(), LifecycleOwner, SavedStateRegist
             }
             runCatching {
                 run.overlayState = run.overlayState.applyEvent(event)
-                if (displayedRun === run && ownsGui && !run.session.isTerminal) {
+                val guiOwnerRunId = guiControl.state.value.ownerRunId
+                if (displayedRun === run && !run.session.isTerminal &&
+                    (guiOwnerRunId == run.runId || guiOwnerRunId == null)) {
                     overlayHost.overlayState = run.overlayState
                     syncActiveRunOverlayVisibility(run)
                 }
@@ -903,7 +905,9 @@ internal class AgentRuntimeService : Service(), LifecycleOwner, SavedStateRegist
             "Agent runtime supplement received: index=${event.index}, chars=${event.text.length}"
         )
         run.overlayState = run.overlayState.applyEvent(event)
-        if (displayedRun === run && guiControl.state.value.ownerRunId == run.runId && !guiControl.state.value.userPaused) {
+        val guiOwnerRunId = guiControl.state.value.ownerRunId
+        if (displayedRun === run && !guiControl.state.value.userPaused &&
+            (guiOwnerRunId == run.runId || guiOwnerRunId == null)) {
             overlayHost.overlayState = run.overlayState
         }
         sendSteerResponse(runId, replyTo, accepted = true, supplementIndex = event.index)
@@ -1003,8 +1007,13 @@ internal class AgentRuntimeService : Service(), LifecycleOwner, SavedStateRegist
             return
         }
         val guiState = guiControl.state.value
-        val activeGuiRun = guiState.userPaused || (guiState.ownerRunId == run.runId && !run.session.isTerminal)
-        if (!activeGuiRun) return
+        // 控制权空闲时胶囊仍可能作为释放后的进度提示展示，回到 Eta 前台时同样要让位给聊天流。
+        val followsDisplayedRun = !run.session.isTerminal && (
+            guiState.userPaused ||
+                guiState.ownerRunId == run.runId ||
+                guiState.ownerRunId == null
+            )
+        if (!followsDisplayedRun) return
         if (suppress) {
             removeAmbientWindows()
         } else {
@@ -1053,7 +1062,15 @@ internal class AgentRuntimeService : Service(), LifecycleOwner, SavedStateRegist
                 overlayHost.overlayState = owner.overlayState
                 syncActiveRunOverlayVisibility(owner)
             }
-            else -> removeAmbientWindows()
+            else -> {
+                val run = displayedRun
+                if (run != null && !run.session.isTerminal) {
+                    overlayHost.overlayState = run.overlayState
+                    syncActiveRunOverlayVisibility(run)
+                } else {
+                    removeAmbientWindows()
+                }
+            }
         }
         updateKeepScreenOn()
         publishExecutionState()

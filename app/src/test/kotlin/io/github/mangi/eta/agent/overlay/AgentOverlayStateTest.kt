@@ -1,7 +1,10 @@
 package io.github.mangi.eta.agent.overlay
 
+import io.github.mangi.eta.agent.runtime.GuiControlStatus
 import io.github.mangi.eta.agent.runtime.ipc.AgentEvent
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AgentOverlayStateTest {
@@ -64,6 +67,30 @@ class AgentOverlayStateTest {
         state = state.applyEvent(AgentEvent.AssistantBlockDelta(2, AgentEvent.AssistantBlockKind.THINKING, 0, 0, "旧想法"))
         state = state.applyEvent(AgentEvent.AssistantBlockStart(2, AgentEvent.AssistantBlockKind.THINKING, 1))
         assertEquals("", state.thought)
+    }
+
+    @Test
+    fun releasedGuiKeepsProgressStateUntilRunEnds() {
+        var state = AgentOverlayState.Initial
+            .applyEvent(AgentEvent.GuiControlChanged(GuiControlStatus.Acquired))
+        assertTrue(state.controlsGui)
+
+        state = state
+            .applyEvent(AgentEvent.ToolStarted(1, "call-1", "release_gui", "{}"))
+            .applyEvent(AgentEvent.GuiControlChanged(GuiControlStatus.Released))
+        assertFalse(state.controlsGui)
+        assertEquals(AgentOverlayPhase.RUNNING, state.phase)
+        assertEquals(AgentOverlayStatus.RunningTool("release_gui"), state.status)
+
+        // 释放后模型继续思考与生成回答：胶囊仍作为进度提示，只是不再宣称手机被接管。
+        state = state.applyEvent(AgentEvent.ToolFinished(1, "call-1", "release_gui", "ok", 0, 0))
+        assertEquals(AgentOverlayPhase.RUNNING, state.phase)
+        assertEquals(AgentOverlayStatus.Reasoning, state.status)
+        assertFalse(state.controlsGui)
+
+        state = state.applyEvent(AgentEvent.RunFinished(2, 0))
+        assertEquals(AgentOverlayPhase.FINISHED, state.phase)
+        assertFalse(state.controlsGui)
     }
 
     @Test

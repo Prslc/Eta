@@ -16,6 +16,8 @@ internal data class AgentOverlayState(
     val round: Int = 0,
     val status: AgentOverlayStatus = AgentOverlayStatus.Reasoning,
     val detailText: String = "",
+    /** 是否持有手机操作权；释放后胶囊仍作为运行进度保留，但不再绘制边缘流光。 */
+    val controlsGui: Boolean = false,
     /**
      * 胶囊第二行：思考时是模型最近一句可见推理，执行工具时是参数摘要（如"点击「搜索」"）。
      * 只保留尾部一小段，供用户扫一眼知道 Agent 在想什么；完整推理仍在会话里。
@@ -55,14 +57,16 @@ internal fun AgentOverlayState.applyEvent(event: AgentEvent): AgentOverlayState 
 
 private fun AgentOverlayState.projectEvent(event: AgentEvent): AgentOverlayState = when (event) {
     is AgentEvent.GuiControlChanged -> when (event.status) {
-        GuiControlStatus.UserPaused -> copy(phase = AgentOverlayPhase.PAUSED, status = AgentOverlayStatus.Paused)
-        GuiControlStatus.Acquired -> copy(phase = AgentOverlayPhase.RUNNING, status = AgentOverlayStatus.Continuing)
-        GuiControlStatus.Waiting, GuiControlStatus.Released -> this
+        GuiControlStatus.UserPaused -> copy(phase = AgentOverlayPhase.PAUSED, status = AgentOverlayStatus.Paused, controlsGui = true)
+        GuiControlStatus.Acquired -> copy(phase = AgentOverlayPhase.RUNNING, status = AgentOverlayStatus.Continuing, controlsGui = true)
+        GuiControlStatus.Waiting -> this
+        GuiControlStatus.Released -> copy(controlsGui = false)
     }
     is AgentEvent.RunStarted -> copy(
         phase = AgentOverlayPhase.RUNNING,
         status = AgentOverlayStatus.Reasoning,
         detailText = "",
+        controlsGui = false,
         activeTools = emptyList(),
     )
     is AgentEvent.RoundStarted -> copy(round = event.round).thinkingUnlessWorking()
@@ -120,6 +124,7 @@ private fun AgentOverlayState.projectEvent(event: AgentEvent): AgentOverlayState
         phase = AgentOverlayPhase.FINISHED,
         round = event.round,
         status = AgentOverlayStatus.ResultReady,
+        controlsGui = false,
         activeTools = emptyList(),
     )
 
@@ -127,6 +132,7 @@ private fun AgentOverlayState.projectEvent(event: AgentEvent): AgentOverlayState
         phase = AgentOverlayPhase.FAILED,
         status = AgentOverlayStatus.RunFailed,
         detailText = event.reason,
+        controlsGui = false,
         activeTools = emptyList(),
     )
 
