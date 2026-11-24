@@ -34,6 +34,7 @@ internal fun SpeechConnectionSection(store: SpeechSettingsStore, synthesis: Bool
         when (store.settings.asr) {
             AsrProvider.MIMO -> MimoAsrConnectionSection(store)
             AsrProvider.DEEPSEEK -> DeepSeekAsrConnectionSection(store)
+            AsrProvider.DEVICE -> Unit
             AsrProvider.QWEN_REALTIME, AsrProvider.QWEN_FLASH, AsrProvider.QWEN_FILE, AsrProvider.DOUBAO ->
                 QwenDoubaoConnectionSection(store, synthesis = false)
         }

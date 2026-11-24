@@ -46,6 +46,13 @@
     <string name="voice_i18n_system_tts_unavailable">系統語音合成不可用，請檢查系統 TTS 引擎</string>
     <string name="voice_i18n_system_tts_storage">無法建立系統語音快取檔案</string>
     <string name="voice_i18n_system_tts_bad_audio">系統語音引擎傳回了不支援的音訊格式</string>
+
+    <!-- System ASR (on-device recognition service) -->
+    <string name="voice_i18n_system_asr_unavailable">系統語音識別不可用，請檢查系統語音識別服務</string>
+    <string name="voice_i18n_system_asr_busy">系統語音識別忙碌中，請稍後再試</string>
+    <string name="voice_i18n_system_asr_failed">系統語音識別失敗</string>
+    <string name="voice_i18n_system_asr_timeout">系統語音識別逾時</string>
+    <string name="voice_i18n_system_asr_language_unsupported">系統語音識別不支援目前語言</string>
     <string name="voice_i18n_audio_format_or_length_invalid">語音音訊格式或長度無效</string>
     <string name="voice_i18n_audio_incomplete">語音音訊不完整，請重試</string>
     <string name="voice_i18n_audio_chunk_too_large">語音音訊區塊過大</string>

@@ -51,6 +51,11 @@ class SpeechSettingsTest {
         }
     }
 
+    @Test fun systemSpeechProvidersNeedNoCredentials() {
+        validateSpeechSettings(SpeechSettings(asr = AsrProvider.DEVICE), SpeechCredentials(), synthesis = false)
+        validateSpeechSettings(SpeechSettings(tts = TtsProvider.SYSTEM), SpeechCredentials(), synthesis = true)
+    }
+
     @Test fun credentialsAreRedactedAndNeverPartOfSettings() {
         val secrets = SpeechCredentials(qwenAsr = "private-key")
         assertFalse(secrets.toString().contains("private-key"))

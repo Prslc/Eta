@@ -1261,6 +1261,7 @@
   <string name="speech_test_recognition">测试识别</string>
   <string name="speech_test_finish">完成录音</string>
   <string name="speech_test_note">测试会调用所选服务，可能产生费用；使用当前填写的配置，不会自动保存。</string>
+  <string name="speech_test_note_system">测试会调用系统语音识别服务；使用当前填写的配置，不会自动保存。</string>
   <string name="speech_preview_voice">试听音色</string>
   <string name="speech_preview_stop">停止试听</string>
   <string name="speech_preview_note">试听使用当前填写的配置，不会自动保存。</string>
@@ -1327,8 +1328,10 @@
   <string name="speech_asr_mimo">MIMO · 语音识别</string>
   <string name="speech_tts_mimo">MIMO</string>
   <string name="speech_asr_deepseek">DeepSeek · 语音识别</string>
+  <string name="speech_asr_system">系统（本地）</string>
   <string name="speech_tts_deepseek">DeepSeek</string>
   <string name="speech_asr_note_deepseek">录音结束后返回文字，不提供实时预览或停顿自动发送。单次最长 120 秒、最大 8 MiB，语种自动识别。</string>
+  <string name="speech_asr_note_system">使用设备内置的语音识别服务（小米设备为 MiBrain，即小爱识别引擎），无需 API Key，也不单独计费；部分服务可能不提供实时预览。</string>
   <string name="speech_deepseek_asr_connection_note">填写 DeepSeek API Key，无需配置 OSS；若留空且已在模型提供商中配置 DeepSeek，将自动复用其凭据。</string>
   <string name="speech_deepseek_asr_connection_note_with_provider">已检测到模型提供商中的 DeepSeek 凭据，API Key 留空将自动复用，也可填写独立 Key 覆盖；无需配置 OSS。</string>
   <string name="speech_deepseek_tts_connection_note">填写 DeepSeek API Key，支持流式语音合成；若留空且已在模型提供商中配置 DeepSeek，将自动复用其凭据。</string>

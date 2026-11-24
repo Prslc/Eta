@@ -76,6 +76,7 @@ internal class SpeechInputController(
     private var finishRequested = false
     private var job: Job? = null
     private var recorder: SpeechAudioCapture? = null
+    private var systemRecognition: SystemSpeechRecognition? = null
     private var lease: SpeechAudioLease? = null
     private var capturing = false
 
@@ -100,87 +101,91 @@ internal class SpeechInputController(
                 val (config, secrets) = SpeechSettingsRepository.resolveDeepSeekFallback(rawConfig, rawSecrets)
                 validateSpeechSettings(config, secrets, synthesis = false)
                 val endpointSilenceMs = if (automaticEndpoint && !holdToTalk) config.autoSendSilenceMs else 0
-                val audio = createRecorder()
-                recorder = audio
                 fun update(transform: (SpeechInputState) -> SpeechInputState) {
                     scope.launch(Dispatchers.Main.immediate) {
                         if (generation == session) mutableState.value = transform(mutableState.value)
                     }
                 }
-                val text = coroutineScope {
-                    var recording: Job? = null
-                    val begin = {
-                        if (recording == null) {
-                            beforeCapture()
-                            capturing = true
-                            recording = launch {
-                                try {
-                                    audio.record(
-                                        onReady = {
-                                            update {
-                                                it.copy(
-                                                    phase = EtaSpeechPhase.LISTENING,
-                                                    progress = if (it.holdToTalk) {
-                                                        AppStrings.get(
-                                                            R.string.voice_i18n_progress_hold_to_talk,
-                                                            "松开发送，移出取消",
-                                                        )
-                                                    } else {
-                                                        AppStrings.get(
-                                                            R.string.voice_i18n_progress_listening_tap_done,
-                                                            "正在聆听，点击完成结束",
-                                                        )
-                                                    },
+                val text = if (config.asr == AsrProvider.DEVICE) {
+                    recognizeWithSystem(config, endpointSilenceMs, ::update)
+                } else {
+                    val audio = createRecorder()
+                    recorder = audio
+                    coroutineScope {
+                        var recording: Job? = null
+                        val begin = {
+                            if (recording == null) {
+                                beforeCapture()
+                                capturing = true
+                                recording = launch {
+                                    try {
+                                        audio.record(
+                                            onReady = {
+                                                update {
+                                                    it.copy(
+                                                        phase = EtaSpeechPhase.LISTENING,
+                                                        progress = if (it.holdToTalk) {
+                                                            AppStrings.get(
+                                                                R.string.voice_i18n_progress_hold_to_talk,
+                                                                "松开发送，移出取消",
+                                                            )
+                                                        } else {
+                                                            AppStrings.get(
+                                                                R.string.voice_i18n_progress_listening_tap_done,
+                                                                "正在聆听，点击完成结束",
+                                                            )
+                                                        },
+                                                    )
+                                                }
+                                            },
+                                            onLevel = { level -> update { it.copy(level = level) } },
+                                        )
+                                    } finally {
+                                        if (generation == session) releaseCapture()
+                                    }
+                                    update {
+                                        it.copy(
+                                            phase = EtaSpeechPhase.RECOGNIZING,
+                                            level = 0f,
+                                            progress = if (it.holdToTalk) {
+                                                AppStrings.get(
+                                                    R.string.voice_i18n_progress_recognizing_and_sending,
+                                                    "正在识别并发送",
                                                 )
-                                            }
-                                        },
-                                        onLevel = { level -> update { it.copy(level = level) } },
-                                    )
-                                } finally {
-                                    if (generation == session) releaseCapture()
-                                }
-                                update {
-                                    it.copy(
-                                        phase = EtaSpeechPhase.RECOGNIZING,
-                                        level = 0f,
-                                        progress = if (it.holdToTalk) {
-                                            AppStrings.get(
-                                                R.string.voice_i18n_progress_recognizing_and_sending,
-                                                "正在识别并发送",
-                                            )
-                                        } else {
-                                            AppStrings.get(R.string.voice_i18n_progress_recognizing, "正在识别")
-                                        },
-                                    )
+                                            } else {
+                                                AppStrings.get(R.string.voice_i18n_progress_recognizing, "正在识别")
+                                            },
+                                        )
+                                    }
                                 }
                             }
+                            Unit
                         }
-                        Unit
-                    }
-                    try {
-                        if (config.asr == AsrProvider.QWEN_REALTIME || config.asr == AsrProvider.DOUBAO) {
-                            recognizeStream(
-                                config,
-                                secrets,
-                                audio.frames,
-                                begin,
-                                { preview -> update { it.copy(preview = preview) } },
-                                { audio.finish() },
-                                endpointSilenceMs,
-                            )
-                        } else {
-                            begin()
-                            val wav = withTimeout(65_000) { collectSpeechAudio(audio.frames) }
-                            // 关闭通道可能同步唤醒收集器，旧会话不能在取消传播完成前启动请求。
-                            coroutineContext.ensureActive()
-                            if (generation != session) throw CancellationException("Speech session replaced")
-                            recognizeFile(context, config, secrets, wav) { progress ->
-                                update { it.copy(phase = EtaSpeechPhase.RECOGNIZING, progress = progress) }
+                        try {
+                            if (config.asr == AsrProvider.QWEN_REALTIME || config.asr == AsrProvider.DOUBAO) {
+                                recognizeStream(
+                                    config,
+                                    secrets,
+                                    audio.frames,
+                                    begin,
+                                    { preview -> update { it.copy(preview = preview) } },
+                                    { audio.finish() },
+                                    endpointSilenceMs,
+                                )
+                            } else {
+                                begin()
+                                val wav = withTimeout(65_000) { collectSpeechAudio(audio.frames) }
+                                // 关闭通道可能同步唤醒收集器，旧会话不能在取消传播完成前启动请求。
+                                coroutineContext.ensureActive()
+                                if (generation != session) throw CancellationException("Speech session replaced")
+                                recognizeFile(context, config, secrets, wav) { progress ->
+                                    update { it.copy(phase = EtaSpeechPhase.RECOGNIZING, progress = progress) }
+                                }
                             }
+                        } finally {
+                            audio.cancel()
+                            recording?.cancel()
                         }
-                    } finally {
-                        audio.cancel()
-                        recording?.cancel()
                     }
                 }
                 if (text.isBlank()) {
@@ -241,7 +246,12 @@ internal class SpeechInputController(
         if (!mutableState.value.active || finishRequested) return
         finishRequested = true
         if (mutableState.value.phase == EtaSpeechPhase.STARTING) { cancel(); return }
-        recorder?.finish()
+        val system = systemRecognition
+        if (system != null) {
+            system.finish()
+        } else {
+            recorder?.finish()
+        }
         val progressText = if (mutableState.value.holdToTalk) {
             AppStrings.get(R.string.voice_i18n_progress_recognizing_and_sending, "正在识别并发送")
         } else {
@@ -253,12 +263,73 @@ internal class SpeechInputController(
     fun cancel() {
         generation++
         finishRequested = false
+        systemRecognition?.cancel()
+        systemRecognition = null
         // 先取消识别协程，避免关闭录音通道被当作正常录音完成而提交请求。
         job?.cancel(); job = null
         recorder?.cancel(); recorder = null
         releaseCapture()
         lease?.close(); lease = null
         mutableState.value = SpeechInputState()
+    }
+
+    private suspend fun recognizeWithSystem(
+        config: SpeechSettings,
+        endpointSilenceMs: Int,
+        update: ((SpeechInputState) -> SpeechInputState) -> Unit,
+    ): String {
+        beforeCapture()
+        capturing = true
+        val session = SystemSpeechRecognition(
+            context = context,
+            onReady = {
+                if (!finishRequested) {
+                    update {
+                        it.copy(
+                            phase = EtaSpeechPhase.LISTENING,
+                            progress = if (it.holdToTalk) {
+                                AppStrings.get(
+                                    R.string.voice_i18n_progress_hold_to_talk,
+                                    "松开发送，移出取消",
+                                )
+                            } else {
+                                AppStrings.get(
+                                    R.string.voice_i18n_progress_listening_tap_done,
+                                    "正在聆听，点击完成结束",
+                                )
+                            },
+                        )
+                    }
+                }
+            },
+            onLevel = { level -> update { it.copy(level = level) } },
+            onPreview = { preview -> update { it.copy(preview = preview) } },
+            onEndOfSpeech = {
+                update {
+                    it.copy(
+                        phase = EtaSpeechPhase.RECOGNIZING,
+                        level = 0f,
+                        progress = if (it.holdToTalk) {
+                            AppStrings.get(
+                                R.string.voice_i18n_progress_recognizing_and_sending,
+                                "正在识别并发送",
+                            )
+                        } else {
+                            AppStrings.get(R.string.voice_i18n_progress_recognizing, "正在识别")
+                        },
+                    )
+                }
+            },
+        )
+        systemRecognition = session
+        if (finishRequested) session.finish()
+        try {
+            return session.listen(config.language, endpointSilenceMs)
+        } finally {
+            if (systemRecognition === session) systemRecognition = null
+            session.cancel()
+            releaseCapture()
+        }
     }
 
     private fun releaseCapture() {

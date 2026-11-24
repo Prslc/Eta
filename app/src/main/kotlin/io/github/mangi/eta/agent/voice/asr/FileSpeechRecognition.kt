@@ -47,6 +47,13 @@ internal suspend fun recognizeSpeechFile(
                     SpeechErrorCode.CONFIGURATION,
                     AppStrings.get(R.string.voice_i18n_asr_requires_streaming, "当前语音服务需要流式识别"),
                 )
+            AsrProvider.DEVICE -> throw SpeechFailure(
+                SpeechErrorCode.CONFIGURATION,
+                AppStrings.get(
+                    R.string.voice_i18n_system_asr_unavailable,
+                    "系统语音识别不可用，请检查系统语音识别服务",
+                ),
+            )
         }
     }
 }

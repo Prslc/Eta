@@ -1181,6 +1181,8 @@
   <string name="speech_asr_note_streaming">邊說邊顯示文字。聊天聽寫點擊完成；助手浮窗可在停頓後自動提交。</string>
   <string name="speech_asr_note_flash">錄音完成後上傳識別，適合短句輸入。</string>
   <string name="speech_asr_note_file">錄音先上傳自有 OSS，再非同步轉寫，等待時間較長。</string>
+  <string name="speech_asr_system">系統（本機）</string>
+  <string name="speech_asr_note_system">使用裝置內建的語音識別服務（小米裝置為 MiBrain，即小愛識別引擎），無需 API Key，也不單獨計費；部分服務可能不提供即時預覽。</string>
   <string name="speech_region">地域</string>
   <string name="speech_region_beijing">北京</string>
   <string name="speech_region_singapore">新加坡</string>
@@ -1250,6 +1252,7 @@
   <string name="speech_test_recognition">測試識別</string>
   <string name="speech_test_finish">完成錄音</string>
   <string name="speech_test_note">測試會調用所選服務，可能產生費用；使用當前填寫的配置，不會自動儲存。</string>
+  <string name="speech_test_note_system">測試會呼叫系統語音識別服務；使用目前填寫的設定，不會自動儲存。</string>
   <string name="speech_preview_voice">試聽音色</string>
   <string name="speech_preview_stop">停止試聽</string>
   <string name="speech_preview_note">試聽使用當前填寫的配置，不會自動儲存。</string>

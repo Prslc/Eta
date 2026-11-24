@@ -119,6 +119,7 @@ internal fun validateSpeechSettings(
             }
         }
     } else when (settings.asr) {
+        AsrProvider.DEVICE -> Unit
         AsrProvider.MIMO -> {
             required(secrets.mimoAsr, R.string.voice_i18n_field_mimo_asr_api_key, "MiMo 识别 API Key")
             speechBaseUrl(settings.mimoAsr.baseUrl)

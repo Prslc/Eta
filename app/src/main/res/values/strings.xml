@@ -1281,6 +1281,7 @@
   <string name="speech_test_recognition">Test recognition</string>
   <string name="speech_test_finish">Finish recording</string>
   <string name="speech_test_note">Testing calls the selected service and may incur charges. It uses the current form values and does not save them.</string>
+  <string name="speech_test_note_system">The test uses the device speech recognition service and the current form values; it does not save them.</string>
   <string name="speech_preview_voice">Preview voice</string>
   <string name="speech_preview_stop">Stop preview</string>
   <string name="speech_preview_note">The preview uses the current form values and does not save them.</string>
@@ -1346,8 +1347,10 @@
   <string name="speech_asr_mimo">MIMO · 语音识别</string>
   <string name="speech_tts_mimo">MIMO</string>
   <string name="speech_asr_deepseek">DeepSeek · 语音识别</string>
+  <string name="speech_asr_system">System (on-device)</string>
   <string name="speech_tts_deepseek">DeepSeek</string>
   <string name="speech_asr_note_deepseek">录音结束后返回文字，不提供实时预览或停顿自动发送。单次最长 120 秒、最大 8 MiB，语种自动识别。</string>
+  <string name="speech_asr_note_system">Uses the device speech recognition service (MiBrain, the XiaoAi engine, on Xiaomi devices). No API key or request cost; the service may not stream partial text.</string>
   <string name="speech_deepseek_asr_connection_note">填写 DeepSeek API Key，无需配置 OSS；若留空且已在模型提供商中配置 DeepSeek，将自动复用其凭据。</string>
   <string name="speech_deepseek_asr_connection_note_with_provider">已检测到模型提供商中的 DeepSeek 凭据，API Key 留空将自动复用，也可填写独立 Key 覆盖；无需配置 OSS。</string>
   <string name="speech_deepseek_tts_connection_note">填写 DeepSeek API Key，支持流式语音合成；若留空且已在模型提供商中配置 DeepSeek，将自动复用其凭据。</string>
