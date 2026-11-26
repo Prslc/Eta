@@ -1,5 +1,7 @@
 package io.github.mangi.eta.hook.xiaomi
 
+import android.speech.tts.SynthesisCallback
+import android.speech.tts.SynthesisRequest
 import io.github.libxposed.api.XposedModule
 import io.github.mangi.eta.config.Prefs
 import io.github.mangi.eta.core.ModuleLogger
@@ -7,6 +9,7 @@ import io.github.mangi.eta.core.safeLogType
 import io.github.mangi.eta.hook.support.HookInstallation
 import io.github.mangi.eta.hook.support.HookRegistrar
 import io.github.mangi.eta.hook.support.HookSupport
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * 把小爱语音引擎的云端合成切到超级小爱同款音色。
@@ -22,10 +25,16 @@ internal object MibrainTtsHooks {
     private const val EVENT_CLASS = "com.xiaomi.ai.api.common.Event"
     private const val CONTEXT_CLASS = "com.xiaomi.ai.api.common.Context"
     private const val REQUEST_STATE_CLASS = "com.xiaomi.ai.api.General\$RequestState"
+    private const val SPEECH_PROCESSOR_CLASS = "com.xiaomi.mibrain.speech.tts.e"
+
+    /** 冷连接经常超过引擎默认的 1500ms，预算放大后再回退本地音色。 */
+    private const val CLOUD_BUDGET_MS = 4_000L
 
     /** 上一次实际生效的音色，仅用于在切换时打一条诊断日志，避免每次合成刷屏。 */
     @Volatile
     private var appliedVoice: MibrainTtsVoice? = null
+
+    private val budgetLogged = AtomicBoolean(false)
 
     fun install(
         module: XposedModule,
@@ -36,6 +45,7 @@ internal object MibrainTtsHooks {
         return hooks.install {
             installSynthesizeVoiceHook(module, classLoader)
             installRequestStateVoiceHook(module, classLoader)
+            installCloudBudgetHook(module, classLoader)
         }
     }
 
@@ -157,6 +167,49 @@ internal object MibrainTtsHooks {
                 }
             }
             chain.proceed()
+        }
+    }
+
+    /** 冷连接经常超过 1500ms，给云端更长的启动预算，避免直接回退到本地旧音色。 */
+    private fun HookRegistrar.installCloudBudgetHook(
+        module: XposedModule,
+        classLoader: ClassLoader,
+    ) {
+        val processorClass = HookSupport.findClassOrNull(classLoader, SPEECH_PROCESSOR_CLASS)
+        val speak = processorClass?.let {
+            HookSupport.findMethod(
+                it,
+                "speak",
+                SynthesisRequest::class.java,
+                Long::class.javaPrimitiveType!!,
+                SynthesisCallback::class.java,
+            )
+        }
+        if (speak == null) {
+            missing(
+                "mibrain.tts-budget",
+                "TtsEngineProcessor.speak",
+                "小爱语音引擎: 未找到云端等待预算入口，保持系统默认 1500ms",
+            )
+            return
+        }
+        HookSupport.deoptimize(module, logger, speak, "TtsEngineProcessor.speak")
+        intercept(
+            "mibrain.tts-budget",
+            speak,
+            "TtsEngineProcessor.speak",
+        ) { chain ->
+            val timeout = chain.getArg(1) as? Long ?: 0L
+            if (timeout > 0 && timeout < CLOUD_BUDGET_MS) {
+                val args = chain.args.toTypedArray()
+                args[1] = CLOUD_BUDGET_MS
+                if (budgetLogged.compareAndSet(false, true)) {
+                    logger.info("小爱语音引擎: 云端等待预算 ${timeout}ms → ${CLOUD_BUDGET_MS}ms，减少冷启动回退本地")
+                }
+                chain.proceed(args)
+            } else {
+                chain.proceed()
+            }
         }
     }
 }
