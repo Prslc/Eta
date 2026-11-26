@@ -38,6 +38,8 @@ internal object Prefs {
         const val ASSISTANT_AUTO_CONFIG = "assistant_auto_config"
         const val GESTURE_BAR_CIRCLE_TO_SEARCH = "gesture_bar_circle_to_search"
         const val DOUBLE_FINGER_CIRCLE_TO_SEARCH = "double_finger_circle_to_search"
+        /** 小爱语音引擎的云端播报音色，空字符串表示跟随系统默认。 */
+        const val TTS_VOICE = "tts_voice"
         const val AGENT_TERMINAL_TOOLS = "agent_terminal_tools"
         const val AGENT_BROWSER_TOOLS = "agent_browser_tools"
         const val AGENT_DEVICE_DIRECT_TOOLS = "agent_device_direct_tools"

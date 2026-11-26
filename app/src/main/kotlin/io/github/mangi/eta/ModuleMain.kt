@@ -18,6 +18,7 @@ import io.github.mangi.eta.hook.hyperos.HyperOsLauncherHooks
 import io.github.mangi.eta.hook.hyperos.HyperOsScreenSearchHooks
 import io.github.mangi.eta.hook.system.SystemServerHooks
 import io.github.mangi.eta.hook.system.SystemUiHooks
+import io.github.mangi.eta.hook.xiaomi.MibrainTtsHooks
 
 class ModuleMain : XposedModule() {
 
@@ -100,6 +101,12 @@ class ModuleMain : XposedModule() {
                     recordInstallation(HyperOsScreenSearchHooks.install(this, logger, param.classLoader))
                 }
             }
+
+            ModuleConfig.MIBRAIN_SPEECH_PACKAGE -> {
+                if (isCurrentPackageProcess(ModuleConfig.MIBRAIN_SPEECH_PACKAGE)) {
+                    recordInstallation(MibrainTtsHooks.install(this, logger, param.classLoader))
+                }
+            }
         }
     }
 
@@ -121,7 +128,8 @@ class ModuleMain : XposedModule() {
             isPackageProcess(processName, ModuleConfig.GOOGLE_PACKAGE) ||
             isPackageProcess(processName, ModuleConfig.COLOR_DIRECT_PACKAGE) ||
             processName == ModuleConfig.COLOROS_MEMORY_PACKAGE ||
-            isPackageProcess(processName, ModuleConfig.XIAOAI_PACKAGE)
+            isPackageProcess(processName, ModuleConfig.XIAOAI_PACKAGE) ||
+            isPackageProcess(processName, ModuleConfig.MIBRAIN_SPEECH_PACKAGE)
     }
 
     private fun isPackageProcess(processName: String, packageName: String): Boolean =

@@ -1276,7 +1276,15 @@
   <string name="speech_voice_doubao_xiaoming">Xiaoming</string>
   <string name="speech_voice_doubao_podcast">Late Night Podcast</string>
   <string name="speech_qwen_voice_note">Model: qwen3-tts-flash. The voice must support this model.</string>
-  <string name="speech_system_voice_note">Uses the device TTS engine (MiBrain, the XiaoAi voice, on Xiaomi devices). No network or API key required, and it works offline.</string>
+  <string name="speech_mibrain_voice">XiaoAi voice</string>
+  <string name="speech_mibrain_voice_system">Follow system</string>
+  <string name="speech_mibrain_voice_mitang">Melissa (default)</string>
+  <string name="speech_mibrain_voice_mumian">Ceiba</string>
+  <string name="speech_mibrain_voice_xinghe">Martin</string>
+  <string name="speech_mibrain_voice_moli">Molly</string>
+  <string name="speech_mibrain_voice_paofu">Mia</string>
+  <string name="speech_mibrain_voice_qingcong">Matt</string>
+  <string name="speech_system_voice_note">Uses the device TTS engine (MiBrain, the XiaoAi voice, on Xiaomi devices). No network or API key required, and it works offline. Picking another voice requires the Eta module to include “Mi AI Speech Engine” (com.xiaomi.mibrain.speech) in its LSPosed scope; it then applies to cloud speech in every app, while offline playback keeps the built-in voice.</string>
   <string name="speech_doubao_voice_note">Model: Doubao Speech Synthesis 2.0.</string>
   <string name="speech_test_recognition">Test recognition</string>
   <string name="speech_test_finish">Finish recording</string>

@@ -1247,7 +1247,15 @@
   <string name="speech_voice_doubao_xiaoming">解說小明</string>
   <string name="speech_voice_doubao_podcast">深夜播客</string>
   <string name="speech_qwen_voice_note">模型：qwen3-tts-flash。音色須支援該模型。</string>
-  <string name="speech_system_voice_note">使用裝置內建的語音合成引擎（小米裝置為 MiBrain，即小愛音色），無需網路和 API Key，可離線使用。</string>
+  <string name="speech_mibrain_voice">小愛音色</string>
+  <string name="speech_mibrain_voice_system">跟隨系統</string>
+  <string name="speech_mibrain_voice_mitang">蜜糖（預設）</string>
+  <string name="speech_mibrain_voice_mumian">木棉</string>
+  <string name="speech_mibrain_voice_xinghe">星河</string>
+  <string name="speech_mibrain_voice_moli">茉莉</string>
+  <string name="speech_mibrain_voice_paofu">泡芙</string>
+  <string name="speech_mibrain_voice_qingcong">青蔥</string>
+  <string name="speech_system_voice_note">使用裝置內建的語音合成引擎（小米裝置為 MiBrain，即小愛音色），無需網路和 API Key，可離線使用。選擇其他音色需在 LSPosed 中勾選「小愛語音引擎」（com.xiaomi.mibrain.speech）；音色對所有應用的雲端播報生效，離線時仍用內建音色。</string>
   <string name="speech_doubao_voice_note">模型：豆包語音合成 2.0。</string>
   <string name="speech_test_recognition">測試識別</string>
   <string name="speech_test_finish">完成錄音</string>

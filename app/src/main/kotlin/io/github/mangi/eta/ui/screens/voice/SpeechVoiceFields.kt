@@ -18,7 +18,7 @@ import androidx.compose.runtime.setValue
 internal fun SpeechVoiceSection(store: SpeechSettingsStore) {
     val settings = store.settings
     if (settings.tts == TtsProvider.SYSTEM) {
-        SpeechNote(stringResource(R.string.speech_system_voice_note))
+        SpeechMibrainVoiceField()
         return
     }
     val voice = when (settings.tts) {
