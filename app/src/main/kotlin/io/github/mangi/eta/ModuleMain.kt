@@ -18,6 +18,7 @@ import io.github.mangi.eta.hook.hyperos.HyperOsLauncherHooks
 import io.github.mangi.eta.hook.hyperos.HyperOsScreenSearchHooks
 import io.github.mangi.eta.hook.system.SystemServerHooks
 import io.github.mangi.eta.hook.system.SystemUiHooks
+import io.github.mangi.eta.hook.xiaomi.MibrainAsrHooks
 import io.github.mangi.eta.hook.xiaomi.MibrainTtsHooks
 
 class ModuleMain : XposedModule() {
@@ -105,6 +106,7 @@ class ModuleMain : XposedModule() {
             ModuleConfig.MIBRAIN_SPEECH_PACKAGE -> {
                 if (isCurrentPackageProcess(ModuleConfig.MIBRAIN_SPEECH_PACKAGE)) {
                     recordInstallation(MibrainTtsHooks.install(this, logger, param.classLoader))
+                    recordInstallation(MibrainAsrHooks.install(this, logger, param.classLoader))
                 }
             }
         }

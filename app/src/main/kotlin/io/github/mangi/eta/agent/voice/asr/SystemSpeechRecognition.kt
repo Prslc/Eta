@@ -117,7 +117,10 @@ internal class SystemSpeechRecognition(
             if (!closed) onLevel((rmsdB / 10f).coerceIn(0f, 1f))
         }
 
-        override fun onBufferReceived(buffer: ByteArray?) = Unit
+        override fun onBufferReceived(buffer: ByteArray?) {
+            // MiBrain 不回调 onRmsChanged，但会转发原始 PCM，用它自己算电平。
+            if (!closed && buffer != null) SpeechLevel.fromPcm16(buffer)?.let(onLevel)
+        }
 
         override fun onEndOfSpeech() {
             if (!closed) onEndOfSpeech()
